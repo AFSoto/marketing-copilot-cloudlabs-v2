@@ -64,30 +64,134 @@ marketing-copilot-cloudlabs/
 
 ---
 
+## Requisitos previos
+
+Antes de comenzar asegúrate de tener instalado:
+
+- **Python 3.11 o 3.12** → https://www.python.org/downloads/
+- **Node.js 18 o superior** → https://nodejs.org/
+- **Angular CLI** → se instala en el paso de frontend
+- **Git** → https://git-scm.com/
+
+---
+
 ## Instalación y Ejecución
 
-### Backend
+### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/tu-usuario/marketing-copilot-cloudlabs.git
+cd marketing-copilot-cloudlabs
+```
+
+---
+
+### 2. Backend
+
+#### 2.1 Crear y activar el entorno virtual
 
 ```bash
 cd backend
 python -m venv venv
-venv\Scripts\activate          # Windows
-pip install -r requirements.txt
-uvicorn main:app --reload
 ```
 
-API disponible en: `http://localhost:8000`
+```bash
+# Windows (PowerShell)
+venv\Scripts\Activate.ps1
+
+# Windows (CMD)
+venv\Scripts\activate.bat
+
+# Mac / Linux
+source venv/bin/activate
+```
+
+> Si PowerShell bloquea la ejecución de scripts, corre esto primero:
+> ```powershell
+> Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+> ```
+
+#### 2.2 Instalar dependencias
+
+```bash
+pip install -r requirements.txt --only-binary=pandas,numpy
+```
+
+#### 2.3 Configurar variables de entorno
+
+Copia el archivo de ejemplo y edítalo:
+
+```bash
+cp .env.example .env
+```
+
+Abre `.env` con cualquier editor de texto y configura el proveedor de IA que vayas a usar (ver sección **Configuración del LLM** más abajo).
+
+#### 2.4 Verificar que los datos estén en su lugar
+
+Asegúrate de que existan estos dos archivos antes de arrancar:
+
+```
+backend/data/1_Data_Recordings.csv
+backend/data/2_Data_Metrics.csv
+```
+
+#### 2.5 Correr el servidor
+
+```bash
+python -m uvicorn main:app --reload --port 8000
+```
+
+Al arrancar correctamente verás:
+
+```
+✅ Marketing Copilot API lista
+   Recordings: 67414 filas
+   Metrics:    33741 filas
+   Usuarios:   47997
+INFO: Uvicorn running on http://127.0.0.1:8000
+```
+
+API disponible en: `http://localhost:8000`  
 Documentación interactiva: `http://localhost:8000/docs`
 
-### Frontend
+---
+
+### 3. Frontend
+
+Abre una **nueva terminal** (deja el backend corriendo) y desde la raíz del proyecto:
 
 ```bash
 cd frontend
-npm install
+```
+
+#### 3.1 Instalar Angular CLI (solo la primera vez)
+
+```bash
+npm install -g @angular/cli
+```
+
+#### 3.2 Instalar dependencias del proyecto
+
+```bash
+npm install --legacy-peer-deps
+```
+
+#### 3.3 Correr la aplicación
+
+```bash
 ng serve
 ```
 
+o equivalentemente:
+
+```bash
+npm start
+```
+
 App disponible en: `http://localhost:4200`
+
+> **Importante:** el backend debe estar corriendo en el puerto 8000 para que el frontend funcione correctamente.
 
 ---
 
@@ -110,13 +214,20 @@ CEREBRAS_API_KEY=csk_...
 LLM_PROVIDER=claude
 ANTHROPIC_API_KEY=sk-ant-...
 
-# Gemini (Google)
+# Gemini (Google) — gratuito
 LLM_PROVIDER=gemini
 GEMINI_API_KEY=AIza...
+# Obtener key: https://aistudio.google.com
 
 # OpenAI
 LLM_PROVIDER=openai
 OPENAI_API_KEY=sk-...
+```
+
+Después de editar el `.env` reinicia el backend con `Ctrl+C` y vuelve a correr `python -m uvicorn main:app --reload --port 8000`. En la consola deberías ver:
+
+```
+🤖 LLM configurado: gemini
 ```
 
 ---
